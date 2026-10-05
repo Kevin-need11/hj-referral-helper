@@ -70,6 +70,7 @@ footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-heigh
   <div class="tabs">
     <div class="tab on" data-tab="find" onclick="switchTab('find')">🔍 找人引薦</div>
     <div class="tab" data-tab="week" onclick="switchTab('week')">📅 本週該幫誰</div>
+    <div class="tab" data-tab="event" onclick="switchTab('event')">📣 邀來活動</div>
   </div>
   <div id="findbar">
     <div class="search-wrap">
@@ -108,6 +109,23 @@ footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-heigh
       <span style="color:#9aa5b8;font-size:11.5px">※ 之後每週會更新、累積成「本月回顧」，看得到每位夥伴的需求變化。</span>
     </div>
     <div id="weeklist"></div>
+  </div>
+
+  <div id="eventview" style="display:none">
+    <div class="wk-intro">
+      <b>📣 邀朋友來參加主題月</b><br>
+      這個月分會有線上主題月活動，下面有「一鍵複製活動文」可以直接轉傳，也幫你針對每位夥伴的領域寫好個人化邀請。<br>
+      <span style="color:#9aa5b8;font-size:11.5px">※ 邀請是認識新朋友、幫分會帶訪客最自然的方式。</span>
+    </div>
+    <div class="card" id="evcard" style="margin-bottom:12px">
+      <div class="cb" style="display:block;border-top:none;padding-top:14px">
+        <div style="font-size:15px;font-weight:700;color:#1F3864" id="ev-title"></div>
+        <div style="font-size:13px;color:#3a4a5c;margin-top:8px;line-height:1.7" id="ev-meta"></div>
+        <div class="btns"><button class="btn a" onclick="copy(EVENT.fulltext,this)"><span class="bi">📋</span>複製整篇活動文（轉傳到群組/朋友）</button></div>
+      </div>
+    </div>
+    <div class="lbl" style="margin:4px 2px 8px">針對夥伴領域的個人化邀請（一鍵複製傳給他）</div>
+    <div id="evlist"></div>
   </div>
 
   <footer>好厝 阿凱 整理 · 資料來自華地產依產業鏈簡報<br>本週快照：<span id="snapdate"></span></footer>
@@ -190,10 +208,64 @@ function switchTab(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));
   document.getElementById('findview').style.display=t==='find'?'block':'none';
   document.getElementById('weekview').style.display=t==='week'?'block':'none';
+  document.getElementById('eventview').style.display=t==='event'?'block':'none';
   document.getElementById('findbar').style.display=t==='find'?'block':'none';
 }
 
-render();renderWeek();
+// ===== 本月主題月活動 =====
+const EVENT={
+  title:"🏢 10月主題月｜企業經營神隊友",
+  when:"2026/10/08（四）06:45–08:45",
+  place:"線上 Zoom（請提前 06:45 上線測試視訊音訊）",
+  signup:"https://forms.gle/UGo1QiGDqStpaYZTA",
+  themes:["法律/企業風險","商務中心/辦公空間","企業形象/網站","房地產企業管理","租賃管理/ERP","企業顧問/商業策略"],
+  fulltext:`🏢 10月主題月｜企業經營神隊友
+
+如果你身邊有做：
+✔ 法律／企業風險管理
+✔ 商務中心／辦公空間
+✔ 企業形象／網站建置
+✔ 房地產企業管理
+✔ 租賃管理／ERP系統
+✔ 企業顧問／商業策略
+✔ 想創業、正在擴張或經營企業的老闆
+
+非常歡迎來參加 BNI 華地產分會 10月份的「企業經營神隊友」主題月！
+
+企業經營，不是單打獨鬥。這個月我們串連不同領域的專業夥伴，從法律風險、辦公空間、企業形象，到管理系統與房地產經營，一起打造更完整的企業支援系統。
+
+✨ 全程線上參加
+☕ 在家就能輕鬆交流
+🤝 認識房地產及跨產業合作夥伴
+🚀 找到企業經營中真正需要的神隊友
+
+📅 2026/10/08（四）06:45 – 08:45
+💻 線上 Zoom（請提前 06:45 上線測試視訊音訊）
+📌 免費報名 👉 https://forms.gle/UGo1QiGDqStpaYZTA`
+};
+function msgInvite(m){
+  return `${m.n.replace(/\s.*/,'')}您好 🙂 好厝華地產分會這個月 10/8（四）早上線上辦「企業經營神隊友」主題月，剛好跟您做的「${m.t}」很相關，想邀您一起來交流、認識房地產與跨產業的合作夥伴。\n\n📅 10/8（四）06:45–08:45 線上Zoom\n📌 免費報名：${EVENT.signup}\n\n期待您來！`;
+}
+function renderEvent(){
+  document.getElementById('ev-title').textContent=EVENT.title;
+  document.getElementById('ev-meta').innerHTML=`📅 ${esc(EVENT.when)}<br>💻 ${esc(EVENT.place)}<br>📌 免費報名：<a href="${esc(EVENT.signup)}" target="_blank" style="color:#2E5299">報名表單</a>`;
+  const el=document.getElementById('evlist');
+  el.innerHTML=MEMBERS.map((m,i)=>`
+    <div class="card" id="ev${m.no}">
+      <div class="ch" onclick="document.getElementById('ev${m.no}').classList.toggle('open')">
+        <div class="av">${esc(initials(m.n))}</div>
+        <div class="info"><div class="nm">${esc(m.n)}</div><div class="mt">${esc(m.t)}</div></div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="cb">
+        <div class="row"><div class="val" style="background:#f7f9fc;border-radius:8px;padding:10px 12px;white-space:pre-wrap">${esc(msgInvite(m))}</div></div>
+        <div class="btns"><button class="btn a" onclick="copy(INV[${i}],this)"><span class="bi">🤝</span>複製邀請訊息傳給 ${esc(m.n.replace(/\s.*/,''))}</button></div>
+      </div>
+    </div>`).join('');
+  window.INV=MEMBERS.map(msgInvite);
+}
+
+render();renderWeek();renderEvent();
 </script>
 </body>
 </html>
