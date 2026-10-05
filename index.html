@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="引薦小幫手">
+<title>華地產 引薦小幫手</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;background:#eef2f7;color:#1a2332;min-height:100vh;padding-bottom:40px}
+header{background:linear-gradient(135deg,#1F3864,#2E5299);padding:16px 16px 14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+h1{font-size:16px;color:#fff;font-weight:700;letter-spacing:.02em}
+header .sub{font-size:11.5px;color:rgba(255,255,255,.6);margin-top:3px}
+.tabs{display:flex;gap:6px;margin-top:12px}
+.tab{flex:1;text-align:center;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);background:rgba(255,255,255,.1);border-radius:8px;padding:8px 0;cursor:pointer}
+.tab.on{color:#1F3864;background:#fff}
+.search-wrap{position:relative;margin-top:11px}
+#q{width:100%;padding:11px 12px 11px 34px;border-radius:9px;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:15px;outline:none}
+#q::placeholder{color:rgba(255,255,255,.5)}
+.sicon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9fb0c8}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:10px 0 2px;-ms-overflow-style:none;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:5px 12px;cursor:pointer}
+main{max-width:680px;margin:0 auto;padding:12px}
+.help{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);margin-bottom:12px;overflow:hidden}
+.help-h{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;cursor:pointer;font-size:13.5px;font-weight:600}
+.help-h .ic{width:30px;height:30px;border-radius:8px;background:#FFF3CD;display:flex;align-items:center;justify-content:center;margin-right:9px}
+.help-b{display:none;padding:0 15px 15px;font-size:13px;color:#3a4a5c;line-height:1.7}
+.help.open .help-b{display:block}
+.help ol{padding-left:18px;margin-top:6px}
+.help li{margin-bottom:5px}
+.count{font-size:11.5px;color:#6b7a90;margin:2px 2px 10px;text-align:right}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);margin-bottom:10px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+.av{width:42px;height:42px;border-radius:50%;background:#1F3864;color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.info{flex:1;min-width:0}
+.nm{font-size:15px;font-weight:700}
+.mt{font-size:12.5px;color:#6b7a90;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{color:#b0bac9;transition:.2s;flex-shrink:0}
+.card.open .chev{transform:rotate(180deg)}
+.cb{display:none;padding:0 14px 14px;border-top:1px solid #f0f3f7}
+.card.open .cb{display:block}
+.row{margin-top:11px}
+.lbl{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#9aa5b8;margin-bottom:4px}
+.val{font-size:13px;line-height:1.55;color:#2d3748}
+.val.offer{background:#E8F5E9;border-radius:8px;padding:8px 11px}
+.val.ask{background:#FFF3E0;border-radius:8px;padding:8px 11px}
+.btns{display:flex;flex-direction:column;gap:8px;margin-top:13px}
+.btn{display:flex;align-items:center;gap:8px;border:none;border-radius:9px;padding:12px 13px;font-size:13.5px;font-weight:600;cursor:pointer;text-align:left;line-height:1.4}
+.btn .bi{font-size:16px}
+.btn.a{background:#1F3864;color:#fff}
+.btn.b{background:#eaf1fa;color:#1a4a6e}
+.btn.copied{background:#2e7d32!important;color:#fff!important}
+.weekwrap .wk-intro{background:#fff;border-radius:12px;padding:13px 15px;font-size:13px;color:#3a4a5c;line-height:1.6;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.wk-card{background:#fff;border-radius:12px;padding:13px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.wk-card .wn{font-size:14px;font-weight:700}
+.wk-card .wa{font-size:13px;color:#b45309;background:#FFF7ED;border-radius:8px;padding:8px 11px;margin-top:7px;line-height:1.55}
+.wk-card .wp{font-size:12px;color:#6b7a90;margin-top:7px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1a2332;color:#fff;font-size:13px;padding:10px 18px;border-radius:22px;opacity:0;transition:.25s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.toast.show{opacity:1}
+footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-height:1.6}
+.empty{text-align:center;color:#9aa5b8;font-size:13px;padding:30px 10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>華地產 引薦小幫手 <span style="font-size:11px;font-weight:500;opacity:.6">C組·外商租賃 v1</span></h1>
+  <div class="sub">想幫夥伴引薦？搜一下 → 一鍵複製現成訊息，直接傳。</div>
+  <div class="tabs">
+    <div class="tab on" data-tab="find" onclick="switchTab('find')">🔍 找人引薦</div>
+    <div class="tab" data-tab="week" onclick="switchTab('week')">📅 本週該幫誰</div>
+  </div>
+  <div id="findbar">
+    <div class="search-wrap">
+      <span class="sicon">🔍</span>
+      <input id="q" placeholder="打需求：包租代管、辦公室、外商、新加坡…" oninput="render()">
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+
+<main>
+  <div id="findview">
+    <div class="help" id="help">
+      <div class="help-h" onclick="document.getElementById('help').classList.toggle('open')">
+        <span style="display:flex;align-items:center"><span class="ic">💡</span>引薦怎麼做？（點開看）</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="help-b">
+        引薦不是「有案子才給」，是平常聽到別人的需求，就想到桌上誰能幫他。
+        <ol>
+          <li><b>聽到關鍵字就想到人</b>：例如有人說「新竹要租給外商工程師」→ 想到做新竹包租的夥伴。</li>
+          <li><b>在這裡搜那個需求</b>，找到最對的人。</li>
+          <li><b>一鍵複製訊息</b>：A＝推薦文貼 FB/群組幫夥伴曝光；B＝直接傳給夥伴幫你的朋友牽線。</li>
+          <li><b>記得回報引薦</b>：引薦出去後在 BNI 填一張引薦單，對方績效才算得到。</li>
+        </ol>
+      </div>
+    </div>
+    <div class="count" id="count"></div>
+    <div id="list"></div>
+  </div>
+
+  <div id="weekview" style="display:none" class="weekwrap">
+    <div class="wk-intro">
+      <b>📅 本週該幫誰留意</b><br>
+      下面是 C組 夥伴「正在找的客戶」。看一眼，想想你認不認識這種人——想到就用上面「找人引薦」複製訊息幫他牽線。<br>
+      <span style="color:#9aa5b8;font-size:11.5px">※ 之後每週會更新、累積成「本月回顧」，看得到每位夥伴的需求變化。</span>
+    </div>
+    <div id="weeklist"></div>
+  </div>
+
+  <footer>好厝 阿凱 整理 · 資料來自華地產依產業鏈簡報<br>本週快照：<span id="snapdate"></span></footer>
+</main>
+
+<div class="toast" id="toast">已複製，可以直接貼上了 ✓</div>
+
+<script>
+// ===== C組（外商租賃·月短租）資料 =====
+const MEMBERS=[
+ {no:"073",n:"蔡宜靜 Ronda",t:"包租代管-新竹",c:"初初不動產",o:"新竹竹北包租代管、外商工程師短期租賃",a:"新竹竹北房東、包租/租賃仲介夥伴、商務租屋公司"},
+ {no:"060",n:"林稼諭 Jessica",t:"包租代管-新北三重",c:"禾楓商務",o:"外商找禾楓、外商研發團隊20年經驗",a:"三重捷運10分屋主/仲介、外商留學生租房"},
+ {no:"055",n:"唐靖童 Amy",t:"辦公室租賃-台北(中山/松山/信義)",c:"輝旺不動產",o:"商辦分析/媒合/談判/設計規劃，10年經驗",a:"30–100坪/100–500坪辦公需求、商仲人才組隊"},
+ {no:"061",n:"張簡筱凡",t:"房仲-新加坡",c:"",o:"新加坡買賣/租賃/投資、組屋公寓新案、店面廠房",a:"新加坡房產交易、企業租賃買賣、外國人投資"}
+];
+const SNAPDATE="2026-10-05";
+const CHIPS=["包租代管","辦公室/商辦","外商租屋","新加坡","短租","房東"];
+
+document.getElementById('snapdate').textContent=SNAPDATE;
+
+// chips
+const chipBox=document.getElementById('chips');
+CHIPS.forEach(c=>{const d=document.createElement('div');d.className='chip';d.textContent=c;d.onclick=()=>{document.getElementById('q').value=c;render();};chipBox.appendChild(d);});
+
+function initials(n){return n.replace(/\s.*/,'').slice(0,1);}
+function esc(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+
+// 兩種引薦訊息
+function msgPromote(m){
+  return `推薦一位我 BNI 的好夥伴 👍\n\n${m.n}（${m.t}${m.c?'／'+m.c:''}）\n專長：${m.o}\n\n最近有朋友需要「${m.t}」相關的，歡迎找我，我幫你牽線！`;
+}
+function msgIntro(m){
+  return `${m.n.replace(/\s.*/,'')}您好 🙂 我這邊有一位朋友可能需要您「${m.t}」的服務，想把他介紹給您認識、由您直接聯繫，方便嗎？我再把雙方資訊給您。謝謝您！`;
+}
+
+function copy(txt,btn){
+  const done=()=>{const old=btn.innerHTML;btn.classList.add('copied');btn.innerHTML='✓ 已複製';toast();setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=old;},1500);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>fallback(txt,done));}
+  else fallback(txt,done);
+}
+function fallback(txt,done){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){alert('複製失敗，請長按選取：\n\n'+txt);}document.body.removeChild(ta);}
+let tt;function toast(){const t=document.getElementById('toast');t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1600);}
+
+function render(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const list=document.getElementById('list');
+  const hit=MEMBERS.filter(m=>!q||[m.n,m.t,m.c,m.o,m.a].join(' ').toLowerCase().includes(q));
+  document.getElementById('count').textContent=hit.length+' 位夥伴'+(q?'（關鍵字：'+esc(q)+'）':'');
+  if(!hit.length){list.innerHTML='<div class="empty">C組沒有符合「'+esc(q)+'」的夥伴。<br>試試：包租代管、辦公室、外商、新加坡。<br><br>（之後其他組加進來，可找的人會更多）</div>';return;}
+  list.innerHTML=hit.map((m,i)=>`
+    <div class="card" id="c${m.no}">
+      <div class="ch" onclick="document.getElementById('c${m.no}').classList.toggle('open')">
+        <div class="av">${esc(initials(m.n))}</div>
+        <div class="info"><div class="nm">${esc(m.n)}</div><div class="mt">NO.${m.no}｜${esc(m.t)}${m.c?'｜'+esc(m.c):''}</div></div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="cb">
+        <div class="row"><div class="lbl">他能提供</div><div class="val offer">${esc(m.o)}</div></div>
+        <div class="row"><div class="lbl">他在找（你能幫他留意的）</div><div class="val ask">${esc(m.a)}</div></div>
+        <div class="btns">
+          <button class="btn a" onclick="copy(PROMO[${i}],this)"><span class="bi">📣</span>複製推薦文（貼 FB／群組幫他曝光）</button>
+          <button class="btn b" onclick="copy(INTRO[${i}],this)"><span class="bi">🤝</span>複製引薦開場（傳給他幫朋友牽線）</button>
+        </div>
+      </div>
+    </div>`).join('');
+  window.PROMO=hit.map(msgPromote);window.INTRO=hit.map(msgIntro);
+}
+
+function renderWeek(){
+  const wl=document.getElementById('weeklist');
+  wl.innerHTML=MEMBERS.map(m=>`
+    <div class="wk-card">
+      <div class="wn">${esc(m.n)}　<span style="font-size:12px;color:#6b7a90;font-weight:500">${esc(m.t)}</span></div>
+      <div class="wa">正在找：${esc(m.a)}</div>
+      <div class="wp">👉 你認識這種人嗎？想到就去「找人引薦」幫他牽線。</div>
+    </div>`).join('');
+}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));
+  document.getElementById('findview').style.display=t==='find'?'block':'none';
+  document.getElementById('weekview').style.display=t==='week'?'block':'none';
+  document.getElementById('findbar').style.display=t==='find'?'block':'none';
+}
+
+render();renderWeek();
+</script>
+</body>
+</html>
