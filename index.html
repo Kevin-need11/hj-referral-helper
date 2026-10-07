@@ -125,6 +125,8 @@ footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-heigh
       <div class="cb" style="display:block;border-top:none;padding-top:14px">
         <div style="font-size:15px;font-weight:700;color:#1F3864" id="ev-title"></div>
         <div style="font-size:13px;color:#3a4a5c;margin-top:8px;line-height:1.7" id="ev-meta"></div>
+        <div class="lbl" style="margin:14px 2px 6px">👇 下面這整段就是「複製整篇活動文」會送出的內容</div>
+        <div class="val" id="ev-fulltext" style="background:#f7f9fc;border-radius:8px;padding:12px 13px;white-space:pre-wrap;font-size:13px;line-height:1.75;color:#2a3745"></div>
         <div class="btns"><button class="btn a" onclick="copy(EVENT.fulltext,this)"><span class="bi">📋</span>複製整篇活動文（轉傳到群組/朋友）</button></div>
       </div>
     </div>
@@ -373,6 +375,7 @@ function msgInvite(m){
 function renderEvent(){
   document.getElementById('ev-title').textContent=EVENT.title;
   document.getElementById('ev-meta').innerHTML=`📅 ${esc(EVENT.when)}<br>💻 ${esc(EVENT.place)}<br>📌 免費報名：<a href="${esc(EVENT.signup)}" target="_blank" style="color:#2E5299">報名表單</a>`;
+  document.getElementById('ev-fulltext').textContent=EVENT.fulltext;
 }
 
 render();renderWeekChips();renderWeek();renderEvent();
