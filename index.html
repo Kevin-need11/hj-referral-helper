@@ -118,8 +118,8 @@ footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-heigh
   <div id="eventview" style="display:none">
     <div class="wk-intro">
       <b>📣 邀朋友來參加主題月</b><br>
-      這個月分會有線上主題月活動，下面有「一鍵複製活動文」可以直接轉傳，也幫你針對每位夥伴的領域寫好個人化邀請。<br>
-      <span style="color:#9aa5b8;font-size:11.5px">※ 邀請是認識新朋友、幫分會帶訪客最自然的方式。</span>
+      這個月分會有線上主題月活動，用下面的「一鍵複製活動文」直接轉傳給你想邀的朋友或群組就可以。<br>
+      <span style="color:#9aa5b8;font-size:11.5px">※ 邀來賓（你認識的新朋友）來參加，是幫分會帶訪客最自然的方式。</span>
     </div>
     <div class="card" id="evcard" style="margin-bottom:12px">
       <div class="cb" style="display:block;border-top:none;padding-top:14px">
@@ -128,8 +128,6 @@ footer{text-align:center;font-size:11px;color:#9aa5b8;margin-top:16px;line-heigh
         <div class="btns"><button class="btn a" onclick="copy(EVENT.fulltext,this)"><span class="bi">📋</span>複製整篇活動文（轉傳到群組/朋友）</button></div>
       </div>
     </div>
-    <div class="lbl" style="margin:4px 2px 8px">針對夥伴領域的個人化邀請（一鍵複製傳給他）</div>
-    <div id="evlist"></div>
   </div>
 
   <footer>好厝 阿凱 整理 · 資料來自華地產依產業鏈簡報<br>本週快照：<span id="snapdate"></span></footer>
@@ -375,20 +373,6 @@ function msgInvite(m){
 function renderEvent(){
   document.getElementById('ev-title').textContent=EVENT.title;
   document.getElementById('ev-meta').innerHTML=`📅 ${esc(EVENT.when)}<br>💻 ${esc(EVENT.place)}<br>📌 免費報名：<a href="${esc(EVENT.signup)}" target="_blank" style="color:#2E5299">報名表單</a>`;
-  const el=document.getElementById('evlist');
-  el.innerHTML=MEMBERS.map((m,i)=>`
-    <div class="card" id="ev${m.no}">
-      <div class="ch" onclick="document.getElementById('ev${m.no}').classList.toggle('open')">
-        <div class="av">${esc(initials(m.n))}</div>
-        <div class="info"><div class="nm">${esc(m.n)}</div><div class="mt">${esc(m.t)}</div></div>
-        <span class="chev">▾</span>
-      </div>
-      <div class="cb">
-        <div class="row"><div class="val" style="background:#f7f9fc;border-radius:8px;padding:10px 12px;white-space:pre-wrap">${esc(msgInvite(m))}</div></div>
-        <div class="btns"><button class="btn a" onclick="copy(INV[${i}],this)"><span class="bi">🤝</span>複製邀請訊息傳給 ${esc(m.n.replace(/\s.*/,''))}</button></div>
-      </div>
-    </div>`).join('');
-  window.INV=MEMBERS.map(msgInvite);
 }
 
 render();renderWeekChips();renderWeek();renderEvent();
