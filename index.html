@@ -280,6 +280,14 @@ function copy(txt,btn){
 function fallback(txt,done){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){alert('複製失敗，請長按選取：\n\n'+txt);}document.body.removeChild(ta);}
 let tt;function toast(){const t=document.getElementById('toast');t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1600);}
 
+let WEEKLY={};
+function wkrows(no){
+  const w=WEEKLY[no]; if(!w) return '';
+  let h='';
+  if(w.have) h+=`<div class="row"><div class="lbl">本週我有${w.have_date?' · '+esc(w.have_date):''}</div><div class="val offer">${esc(w.have)}</div></div>`;
+  if(w.want) h+=`<div class="row"><div class="lbl">本週我要${w.want_date?' · '+esc(w.want_date):''}</div><div class="val ask">${esc(w.want)}</div></div>`;
+  return h;
+}
 function render(){
   const q=document.getElementById('q').value.trim().toLowerCase();
   const list=document.getElementById('list');
@@ -296,6 +304,7 @@ function render(){
       <div class="cb">
         <div class="row"><div class="lbl">他能提供</div><div class="val offer">${esc(m.o)}</div></div>
         <div class="row"><div class="lbl">他在找（你能幫他留意的）</div><div class="val ask">${esc(m.a)}</div></div>
+        ${wkrows(m.no)}
         <div class="btns">
           <button class="btn a" onclick="copy(PROMO[${i}],this)"><span class="bi">📣</span>複製推薦文（貼 FB／群組幫他曝光）</button>
           <button class="btn b" onclick="copy(INTRO[${i}],this)"><span class="bi">🤝</span>複製引薦開場（傳給他幫朋友牽線）</button>
@@ -322,12 +331,17 @@ function renderWeek(){
   const wl=document.getElementById('weeklist');
   const hit=MEMBERS.filter(m=>!weekgrp||m.g===weekgrp);
   document.querySelector('#weekview .wk-intro b').textContent='📅 本週該幫誰留意'+(weekgrp?'（'+GROUPS[weekgrp].split('｜')[0]+'組·'+hit.length+'人）':'（全部 '+hit.length+' 人）');
-  wl.innerHTML=hit.map(m=>`
+  wl.innerHTML=hit.map(m=>{
+    const w=WEEKLY[m.no]||{};
+    const want=w.want||m.a;
+    const dtag=w.want_date?` <span style="color:#9aa5b8;font-size:11px">(${esc(w.want_date)}更新)</span>`:'';
+    return `
     <div class="wk-card">
       <div class="wn">${esc(m.n)}　<span style="font-size:12px;color:#6b7a90;font-weight:500">${esc(m.t)}</span></div>
-      <div class="wa">正在找：${esc(m.a)}</div>
+      <div class="wa">本週我要：${esc(want)}${dtag}</div>
+      ${w.have?`<div class="wa" style="color:#2E5299">本週我有：${esc(w.have)}${w.have_date?` <span style="color:#9aa5b8;font-size:11px">(${esc(w.have_date)}更新)</span>`:''}</div>`:''}
       <div class="wp">👉 你認識這種人嗎？想到就去「找人引薦」幫他牽線。</div>
-    </div>`).join('');
+    </div>`;}).join('');
 }
 
 function switchTab(t){
@@ -378,7 +392,8 @@ function renderEvent(){
   document.getElementById('ev-fulltext').textContent=EVENT.fulltext;
 }
 
-render();renderWeekChips();renderWeek();renderEvent();
+function applyWeekly(){fetch('bni_weekly.json?t='+Date.now()).then(r=>r.json()).then(d=>{WEEKLY=d.members||{};render();renderWeek();}).catch(()=>{});}
+render();renderWeekChips();renderWeek();renderEvent();applyWeekly();
 </script>
 </body>
 </html>
